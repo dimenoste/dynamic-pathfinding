@@ -43,9 +43,7 @@ class Grid:
         x_min = 0
         y_max = self.rows - 1
         x_max = self.cols - 1
-        return (x_min <= current[1] <= x_max) and (
-            y_min <= current[0] <= y_max
-        )
+        return (x_min <= current[1] <= x_max) and (y_min <= current[0] <= y_max)
 
     # def add_points(a :tuple[int,int], b : tuple[int,int]) -> tuple[int,int]:
     #     return (a[0]+b[0], a[1]+b[1])
@@ -61,17 +59,15 @@ class Grid:
 
         if not self.is_in_grid(current):
             return None
-
         if self.is_in_grid(left):
-            set.add(left)
+            neighbors.add(left)
         if self.is_in_grid(right):
-            set.add(right)
+            neighbors.add(right)
         if self.is_in_grid(up):
-            set.add(up)
+            neighbors.add(up)
         if self.is_in_grid(down):
-            set.add(down)
-
-        return None
+            neighbors.add(down)
+        return neighbors
 
     def display(self) -> None:
         for col in range(self.cols):
@@ -96,8 +92,6 @@ def main() -> int:
     # while not (to_visit_queue.empty()):
     #     grid.
 
-
-
     # ## cases to visit
     # is_visited = set()
     # is_visited.add(start)
@@ -111,10 +105,11 @@ def main() -> int:
     #     print("no path to goal")
     #     return 1
 
-    # # get_neighbors
-    # grid.get_
+    # get_neighbors
+    neighbors = grid.get_neighbors((2, 1))
+    print(neighbors)
 
-    # return 0
+    return 0
 
 
 if __name__ == "__main__":
