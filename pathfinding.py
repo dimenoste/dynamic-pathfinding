@@ -28,8 +28,8 @@ class Grid:
         grid = np.zeros((self.cols, self.rows), dtype=object)
         x_start, y_start = self.start
         x_goal, y_goal = self.goal
-        grid[x_start][y_start] = MARKER_START
-        grid[x_goal][y_goal] = MARKER_GOAL
+        grid[y_start][x_start] = MARKER_START
+        grid[y_goal][x_goal] = MARKER_GOAL
         grid = self.add_obstacles_to_grid(grid)
         return grid
 
@@ -39,11 +39,12 @@ class Grid:
         return grid
 
     def is_in_grid(self, current: tuple[int, int]) -> bool:
-        first_row, first_col = 0
-        last_row = self.rows - 1
-        last_col = self.cols - 1
-        return (first_row <= current[1] <= last_row) and (
-            first_col <= current[0] <= last_col
+        y_min = 0
+        x_min = 0
+        y_max = self.rows - 1
+        x_max = self.cols - 1
+        return (x_min <= current[1] <= x_max) and (
+            y_min <= current[0] <= y_max
         )
 
     # def add_points(a :tuple[int,int], b : tuple[int,int]) -> tuple[int,int]:
@@ -65,49 +66,55 @@ class Grid:
             set.add(left)
         if self.is_in_grid(right):
             set.add(right)
-        if self.is_in_grid(left):
-            set.add(left)
-        if self.is_in_grid(left):
-            set.add(left)
+        if self.is_in_grid(up):
+            set.add(up)
+        if self.is_in_grid(down):
+            set.add(down)
 
         return None
 
     def display(self) -> None:
-        for row in range(self.rows):
-            for col in range(self.cols):
-                print(self.grid[row][col], end=" ")
+        for col in range(self.cols):
+            for row in range(self.rows):
+                print(self.grid[col][row], end=" ")
             print()
 
 
 def main() -> int:
 
     ## data given
-    start = (0, 0)
-    goal = (4, 6)
     rows = 5
     cols = 7
+    start = (cols - cols, rows - rows)
+    goal = (cols - 1, rows - 1)
     obstacles = {(1, 5), (1, 6), (3, 1), (3, 2), (3, 3), (3, 4), (3, 5)}
-
-    ## cases to visit
-    is_visited = set()
-    is_visited.add(start)
-    print(is_visited)
-
-    to_visit_queue: Queue = Queue()
-    to_visit_queue.put(start)
-
-    curr = to_visit_queue.get()
-    if curr is None:
-        print("no path to goal")
-        return 1
-
-    # get_neighbors
 
     ## grid creaction
     grid = Grid(rows, cols, start, goal, obstacles)
     grid.display()
 
-    return 0
+    # while not (to_visit_queue.empty()):
+    #     grid.
+
+
+
+    # ## cases to visit
+    # is_visited = set()
+    # is_visited.add(start)
+    # print(is_visited)
+
+    # to_visit_queue: Queue = Queue()
+    # to_visit_queue.put(start)
+
+    # curr = to_visit_queue.get()
+    # if curr is None:
+    #     print("no path to goal")
+    #     return 1
+
+    # # get_neighbors
+    # grid.get_
+
+    # return 0
 
 
 if __name__ == "__main__":
