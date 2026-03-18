@@ -35,7 +35,7 @@ class Grid:
 
     def add_obstacles_to_grid(self, grid: np.ndarray) -> np.ndarray:
         for x, y in self.obstacles:
-            grid[x][y] = MARKER_OBSTACLE
+            grid[y][x] = MARKER_OBSTACLE
         return grid
 
     def is_in_grid(self, current: tuple[int, int]) -> bool:
@@ -75,6 +75,29 @@ class Grid:
                 print(self.grid[col][row], end=" ")
             print()
 
+    def display_path(self, path : set[tuple[int,int]] | None) -> None:
+        if not path:
+            return 
+        for case in path:
+            x, y = case
+            if not (case == self.start or case == self.goal):
+                self.grid[y][x] = "p"
+        self.display()
+
+
+
+def get_parents(curr : tuple[int, int], goal : tuple[int, int], parents : dict[tuple[int,int], tuple[int, int] | None]) -> set[tuple[int, int]] | None:
+    cases_in_path = set()
+    if curr != goal:
+        print("make sure current case you are in is your final goal")
+        return None
+
+    while curr != None:
+        cases_in_path.add(curr)
+        curr = parents[curr]
+
+    return cases_in_path
+
 
 def main() -> int:
 
@@ -83,34 +106,50 @@ def main() -> int:
     cols = 7
     start = (cols - cols, rows - rows)
     goal = (cols - 1, rows - 1)
-    obstacles = {(1, 5), (1, 6), (3, 1), (3, 2), (3, 3), (3, 4), (3, 5)}
+    obstacles = {(1, 4), (1, 4), (3,0), (3, 1), (3, 2), (3, 3), (3, 4), (3, 4), (5,0), (5,1)}
 
     ## grid creaction
     grid = Grid(rows, cols, start, goal, obstacles)
     grid.display()
 
-    # while not (to_visit_queue.empty()):
-    #     grid.
+    ## cases already visited
+    is_visited = set()
+    is_visited.add(start)
 
-    # ## cases to visit
-    # is_visited = set()
-    # is_visited.add(start)
-    # print(is_visited)
+    ## cases to be visited
+    to_visit_queue: Queue = Queue()
+    to_visit_queue.put(start)
 
-    # to_visit_queue: Queue = Queue()
-    # to_visit_queue.put(start)
+    ## parents of each case 
+    parents = dict()
+    parents[start] = None
 
-    # curr = to_visit_queue.get()
-    # if curr is None:
-    #     print("no path to goal")
-    #     return 1
+    curr = start
 
-    # get_neighbors
-    neighbors = grid.get_neighbors((2, 1))
-    print(neighbors)
+    while not (to_visit_queue.empty()):
+        if curr == goal:
+            print("goal found")
+            break
+        # get_neighbors
+        neighbors = grid.get_neighbors(curr)
+        for case in neighbors :
+            if not (case in is_visited or case in obstacles):
+                to_visit_queue.put(case)
+                if not case in parents.keys():
+                    parents[case] = curr
+                is_visited.add(case)
+                curr = case
+                
+                
+
+        curr = to_visit_queue.get()
+    
+    path = get_parents(curr, goal, parents)
+    print(path)
+
+    grid.display_path(path)
 
     return 0
-
 
 if __name__ == "__main__":
     main()
